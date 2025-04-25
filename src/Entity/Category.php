@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 class Category
@@ -14,6 +15,7 @@ class Category
     private ?int $id = null;
 
     #[ORM\Column(length: 50, unique:true)]
+    #[Groups(["user:books"])]
     private ?string $label = null;
 
     public function getId(): ?int

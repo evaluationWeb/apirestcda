@@ -12,7 +12,6 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\State\UserPasswordHasher;
 
@@ -30,6 +29,7 @@ use App\State\UserPasswordHasher;
             normalizationContext: ['groups' => 'user:list']),
         new Post(
             processor: UserPasswordHasher::class,
+            normalizationContext: ['groups' => 'user:item'],
             uriTemplate: '/user',
             status: 201
         )
@@ -43,7 +43,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["user:item", "user:list"])]
+    #[Groups(["user:item", "user:list", "user:books"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
@@ -73,6 +73,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var Collection<int, Book>
      */
     #[ORM\ManyToMany(targetEntity: Book::class)]
+    #[Groups(["user:books"])]
     private Collection $books;
 
     public function __construct()
