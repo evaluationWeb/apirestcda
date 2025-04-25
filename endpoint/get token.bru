@@ -1,0 +1,18 @@
+meta {
+  name: get token
+  type: http
+  seq: 2
+}
+
+post {
+  url: https://127.0.0.1:8001/api/login_check
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "username":"mathieu.mith@adrar.fr",
+    "password":"1234"
+  }
+}

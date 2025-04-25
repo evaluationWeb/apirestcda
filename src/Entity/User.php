@@ -6,18 +6,42 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+#[ApiResource(
+    operations: [
+        new Get(
+            uriTemplate: '/user/{id}', 
+            requirements: ['id' => '\d+'],
+            normalizationContext: ['groups' => 'user:item']),
+        new GetCollection(
+            uriTemplate: '/users',
+            normalizationContext: ['groups' => 'user:list']),
+        new Post(
+            uriTemplate: '/user',
+            status: 201
+        )
+    ],
+    order: ['id' => 'ASC', 'firstname' => 'ASC'],
+    paginationEnabled: false
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["user:item", "user:list"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
+    #[Groups(["user:item", "user:list"])]
     private ?string $email = null;
 
     /**
@@ -36,6 +60,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $firstname = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups(["user:item", "user:list"])]
     private ?string $lastname = null;
 
     public function getId(): ?int
